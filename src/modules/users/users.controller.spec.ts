@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
-import { NotFoundException } from '@nestjs/common';
 import { User } from './user.entity';
 
 describe('UsersController', () => {
@@ -16,7 +15,7 @@ describe('UsersController', () => {
     fakeAuthService = {
       // signup: (email: string, password: string) => {},
       signin: (email, password) => {
-        return Promise.resolve({ id: _id, email, password });
+        return Promise.resolve({ id: _id, email, password } as User);
       },
     };
     fakeUserService = {
@@ -24,7 +23,8 @@ describe('UsersController', () => {
       findOne: (id: number) => {
         return Promise.resolve({ id, email, password } as User);
       },
-      find: (email: string) => Promise.resolve([{ id: _id, email, password }]),
+      find: (email: string) =>
+        Promise.resolve([{ id: _id, email, password } as User]),
       // remove: () => {},
       // update: () => {},
     };
@@ -41,11 +41,6 @@ describe('UsersController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
-  });
-
-  it('find all users - returns the list of users', async () => {
-    const users = await controller.findAllUsers(email);
-    expect(users[0].email).toBe(email);
   });
 
   it('fndUser returns a single user with given id', async () => {

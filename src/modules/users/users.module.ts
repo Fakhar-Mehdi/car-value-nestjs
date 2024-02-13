@@ -13,10 +13,10 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
   providers: [
     UsersService,
     AuthService,
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: CurrentUserInterceptor,
-    // },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CurrentUserInterceptor,
+    },
   ],
 })
 export class UsersModule {}

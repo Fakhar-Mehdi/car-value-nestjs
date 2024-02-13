@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from '../users.service';
 
@@ -11,15 +12,15 @@ export class CurrentUserInterceptor implements NestInterceptor {
   constructor(private userService: UsersService) {}
 
   async intercept(context: ExecutionContext, next: CallHandler) {
-    console.log('in current user interceptor');
-
     const request = context.switchToHttp().getRequest();
     const { userId } = request.session || {};
-    console.log('CurrentUserInterceptor userId', userId);
 
     if (userId) {
       const user = await this.userService.findOne(userId);
-      console.log(' CurrentUserInterceptoruser', user);
+      if (!user)
+        throw new NotFoundException(
+          `User not found. No user has this id: ${userId}`,
+        );
 
       request.CurrentUser = user;
     }

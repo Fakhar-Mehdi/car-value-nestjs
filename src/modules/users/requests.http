@@ -1,0 +1,24 @@
+### Sing Up
+POST http://localhost:3000/auth/signup
+Content-Type: application/json
+
+{
+    "email": "z@qaz.com", "password":"sher aya sher"
+}
+
+### Sing In
+
+POST http://localhost:3000/auth/signin
+Content-Type: application/json
+
+{
+    "email": "z@qaz.com", "password":"sher aya sher"
+}
+
+### sign Out
+POST http://localhost:3000/auth/signout
+
+
+### Get the currently signedin user
+
+GET http://localhost:3000/auth/whoami
