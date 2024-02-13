@@ -8,6 +8,7 @@ import { ReportsModule } from '../reports/reports.module';
 import { UsersModule } from '../users/users.module';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 
 const cookieSession = require('cookie-session');
 
@@ -27,6 +28,10 @@ const cookieSession = require('cookie-session');
           entities: [User, Report],
         };
       },
+    }),
+    JwtModule.register({
+      secret: 'sher aya sher',
+      signOptions: { expiresIn: '6h' },
     }),
     // TypeOrmModule.forRoot({
     //   type: 'sqlite',

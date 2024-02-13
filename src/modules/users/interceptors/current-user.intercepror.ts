@@ -17,10 +17,10 @@ export class CurrentUserInterceptor implements NestInterceptor {
 
     if (userId) {
       const user = await this.userService.findOne(userId);
-      if (!user)
-        throw new NotFoundException(
-          `User not found. No user has this id: ${userId}`,
-        );
+      // if (!user)
+      //   throw new NotFoundException(
+      //     `User not found. No user has this id: ${userId}`,
+      //   );
 
       request.CurrentUser = user;
     }

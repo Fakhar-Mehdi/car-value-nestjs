@@ -6,11 +6,15 @@ import {
 import { UsersService } from './users.service';
 import { scrypt as _scrypt, randomBytes } from 'crypto';
 import { promisify } from 'util';
+import { JwtService } from '@nestjs/jwt';
 
 const scrypt = promisify(_scrypt);
 @Injectable()
 export class AuthService {
-  constructor(private userService: UsersService) {}
+  constructor(
+    private userService: UsersService,
+    private jwtService: JwtService,
+  ) {}
   async signup(email: string, password: string) {
     // see email is unique?
     const users = await this.userService.find(email);
@@ -38,7 +42,8 @@ export class AuthService {
 
     let result = (await scrypt(password, salt, 32)) as Buffer;
     //   result= result.toString('hex')
-    if (result.toString('hex') === hash) return user;
+    if (result.toString('hex') === hash)
+      return { accessToken: this.jwtService.sign({ id: user.id }) };
     throw new BadRequestException('Incorrect Email or Password');
 
     //seperate the hash password and get salt and hash1

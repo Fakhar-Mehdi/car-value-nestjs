@@ -10,6 +10,7 @@ import {
   Session,
   UseGuards,
   Redirect,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Serialize } from '../../common/interceptors/serialize.interceptor';
@@ -34,33 +35,31 @@ export class UsersController {
       userData.email,
       userData.password,
     );
-    session.userId = user.id;
     return user;
   }
 
   @Post('signin')
   async signin(@Body() userData: CreateUserDto, @Session() session: any) {
-    const user = await this.authService.signin(
+    const { accessToken } = await this.authService.signin(
       userData.email,
       userData.password,
     );
-    session.userId = user.id;
-    return user;
+    return accessToken;
   }
   // @Get()
   // findAllUsers() {
   //   return this.userService.find(null)
   // }
 
-  @Post('signout')
-  signOut(@Session() session: any) {
-    session.userId = null;
-  }
+  // @Post('signout')
+  // signOut(@Session() session: any) {
+  //   session.userId = null;
+  // }
 
   @Get('whoami')
   @UseGuards(AuthGuard)
   whoAmI(@CurrentUser() user: User) {
-    return user;
+    return user ? user : 'Not Signed In';
   }
 
   @Delete('/:id')
@@ -73,7 +72,9 @@ export class UsersController {
     return this.userService.update(parseInt(id), body);
   }
   @Get('/:id')
-  findUser(@Param('id') id: string) {
-    return this.userService.findOne(parseInt(id));
+  async findUser(@Param('id') id: string) {
+    const user = await this.userService.findOne(parseInt(id));
+    if (!user) throw new NotFoundException('User not Found');
+    return user;
   }
 }

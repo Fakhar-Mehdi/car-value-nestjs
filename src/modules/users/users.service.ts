@@ -26,19 +26,17 @@ export class UsersService {
   async find(email: string) {
     if (!email) throw new BadRequestException('please provide email');
     const users = await this.repo.find({ where: { email } });
-    // if (!users || !users.length)
-    //   throw new NotFoundException(
-    //     `Users not found. No user has this email: ${email}`,
-    //   );
     return users;
   }
   async update(id: number, userData: Partial<User>) {
     const user = await this.findOne(id);
+    if (!user) throw new NotFoundException('User not Found');
     Object.assign(user, userData);
     return this.repo.save(user);
   }
   async remove(id: number) {
     const user = await this.findOne(id);
+    if (!user) throw new NotFoundException('User not Found');
     return this.repo.remove(user);
   }
 }
