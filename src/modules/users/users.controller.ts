@@ -14,12 +14,18 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Serialize } from '../../common/interceptors/serialize.interceptor';
-import { CreateUserDto, UpdateUserDto, UserDto } from './user.dto';
+import {
+  CreateUserDto,
+  SignInUserDto,
+  UpdateUserDto,
+  UserDto,
+} from './user.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '../../guards/auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { User } from './user.entity';
+import { ROLES, User } from './user.entity';
 import { emit } from 'process';
+import { RoleGuard } from 'src/guards/role.guard';
 
 @Controller('auth')
 @Serialize(UserDto)
@@ -34,12 +40,13 @@ export class UsersController {
     const user = await this.authService.signup(
       userData.email,
       userData.password,
+      userData.role,
     );
     return user;
   }
 
   @Post('signin')
-  async signin(@Body() userData: CreateUserDto, @Session() session: any) {
+  async signin(@Body() userData: SignInUserDto, @Session() session: any) {
     const { accessToken } = await this.authService.signin(
       userData.email,
       userData.password,
@@ -57,7 +64,7 @@ export class UsersController {
   // }
 
   @Get('whoami')
-  @UseGuards(AuthGuard)
+  @UseGuards(new RoleGuard(ROLES.ADMIN))
   whoAmI(@CurrentUser() user: User) {
     return user ? user : 'Not Signed In';
   }

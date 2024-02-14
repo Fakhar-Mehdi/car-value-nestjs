@@ -11,8 +11,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class UsersService {
   constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
-  create(email: string, password: string) {
-    const user = this.repo.create({ email, password });
+  create(email: string, password: string, role: string) {
+    const user = this.repo.create({ email, password, role });
     console.log(`\n\Creating a new user with email: ${email}n`);
     return this.repo.save(user);
   }

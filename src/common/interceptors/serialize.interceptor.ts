@@ -5,9 +5,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { plainToClass, plainToInstance } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { User } from 'src/modules/users/user.entity';
+import { UsersService } from 'src/modules/users/users.service';
+import { Repository } from 'typeorm';
 
 interface ClassConstructor {
   new (...args: any[]): {};
@@ -24,15 +27,24 @@ export class SerializeInterceptor implements NestInterceptor {
   ) {}
   intercept(context: ExecutionContext, handler: CallHandler): Observable<any> {
     //run before request - "handler"
-    const request = context.switchToHttp().getRequest();
-    const token = request.headers['auth'];
-    if (token) {
-      // const j = new JwtService();
-      const decodedToken = this.jwtService.decode(token);
-      console.log('decodedToken', decodedToken);
-      request.CurrentUser = decodedToken.id;
-    }
+    //  const request = context.switchToHttp().getRequest();
+    //  const token = request.headers['auth'];
+    //  console.log('token', token);
 
+    //  if (token) {
+    //    const jwtService = new JwtService();
+    //    const decodedToken = jwtService.decode(token);
+    //    console.log('decodedToken1', decodedToken);
+    //    const { userId, role } = decodedToken;
+    //    if (userId && role) {
+    //      console.log('decodedToken2', decodedToken);
+    //      if (user)
+    //        request.CurrentUser = {
+    //          userId,
+    //          role,
+    //        };
+    //  }
+    //  }
     //mess around with response - "next"
     return handler.handle().pipe(
       //run something before response is sent out
